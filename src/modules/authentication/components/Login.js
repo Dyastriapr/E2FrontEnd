@@ -15,23 +15,28 @@ const Login = () => {
     setEmailError(""); // Clear previous errors
     setPasswordError("");
 
-    try {
-      const response = await axios.post(
-        "https://e2f-api-production.up.railway.app/api/user/login",
-        {
-          email: email,
-          password: password,
-        }
-      );
-      console.log(response.data);
+    if (email==="guru@pelabuhanratu.com" && password === "123456") {
       navigate("/dashboard");
-    } catch (error) {
-      if (error.response) {
-        const { emailError, passwordError } = error.response.data;
-        setEmailError(emailError || "");
-        setPasswordError(passwordError || "");
-      }
+    } else {
+      alert("Email atau Password Salah")
     }
+    // try {
+    //   const response = await axios.post(
+    //     "https://e2f-api-production.up.railway.app/api/user/login",
+    //     {
+    //       email: email,
+    //       password: password,
+    //     }
+    //   );
+    //   console.log(response.data);
+    //   navigate("/dashboard");
+    // } catch (error) {
+    //   if (error.response) {
+    //     const { emailError, passwordError } = error.response.data;
+    //     setEmailError(emailError || "");
+    //     setPasswordError(passwordError || "");
+    //   }
+    // }
   };
 
   return (
@@ -50,7 +55,7 @@ const Login = () => {
                 <form onSubmit={Auth}>
                   <div className="mt-4 relative px-6">
                     <label htmlFor="username" className="text-lg">
-                      Username
+                      email
                     </label>
                     <div className="flex items-center mt-1 grow mt-2">
                       <img
