@@ -8,7 +8,7 @@ import Tahunajar from "../modules/datamaster/tahunajar";
 import Mapel from "../modules/datamaster/mapel";
 import Siswa from "../modules/datamaster/siswa";
 import DataSiswa from "../modules/data/DataSiswa";
-import Nilai from "../modules/nilai/Nilai";
+import Nilai from "../modules/nilai";
 import DataGuru from "../modules/data/DataGuru";
 
 function BaseRoute() {
