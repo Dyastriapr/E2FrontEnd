@@ -443,7 +443,6 @@ export default function Nilai() {
           >
             Add Mata Pelajaran
           </button>
-          <button className="btn btn-primary me-2">TARIK NILAI</button>
         </div>
       </div>
 
