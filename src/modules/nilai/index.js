@@ -30,7 +30,10 @@ export default function Nilai() {
     credit_ganjil: 0,
     credit_genap: 0,
   });
+  const [newSaldo, setnewSaldo] = useState(0);
 
+  console.log("saldo", saldo);
+  console.log("formdat", formData);
   //handle
 
   const openModal = () => {
@@ -38,6 +41,7 @@ export default function Nilai() {
   };
 
   const openAddModal = async (item) => {
+    await fetchDataSaldo(item.id_siswa, item.id_mapel);
     setFormData({
       id: item.id,
       credit_ganjil: item.credit_ganjil,
@@ -54,15 +58,16 @@ export default function Nilai() {
       credit_genap: item.credit_genap,
     });
 
-    await fetchDataSaldo(item.id_siswa, item.id_mapel);
     setModalSetorOpen(true);
   };
 
   const closeModal = () => {
+    setSemester(1);
+    setSaldo({});
+    setnewSaldo(0);
     setModalOpen(false);
     setModalSetorOpen(false);
     setModalTambahOpen(false);
-    setSaldo({});
     setFormData({
       credit_ganjil: 0,
       debet_ganjil: 0,
@@ -73,7 +78,6 @@ export default function Nilai() {
       id_kelas: 0,
       id_tahun_ajar: 0,
     });
-    setSemester(1);
   };
 
   // api
@@ -108,7 +112,7 @@ export default function Nilai() {
     axios
       .request(config)
       .then((response) => {
-        setSaldo(response.data.data || {});
+        setSaldo(response.data.data);
         console.log("saldo", response.data.data);
       })
       .catch((error) => {
@@ -178,9 +182,8 @@ export default function Nilai() {
 
   const setorNilai = (e) => {
     e.preventDefault();
-    let data = formData;
-
-    let config = {
+    const data = formData;
+    const config = {
       method: "put",
       maxBodyLength: Infinity,
       url: "https://e2f-api-production.up.railway.app/api/nilai/update",
@@ -196,63 +199,20 @@ export default function Nilai() {
         updateSaldo();
       })
       .catch((error) => {
-        console.log(error);
+        console.error("Error updating nilai:", error);
         alert("Gagal setor nilai");
       });
   };
 
-  const deleteNilai = async (item) => {
-    // Konfirmasi dengan pengguna
-    const confirmDelete = window.confirm(
-      "Apakah Anda yakin ingin menghapus nilai ini?"
-    );
-
-    await fetchDataSaldo(item.id_siswa, item.id_mapel);
-
-    if (confirmDelete) {
-      axios
-        .delete(`https://e2f-api-production.up.railway.app/api/nilai/delete`, {
-          data: {
-            id: item.id,
-          },
-        })
-        .then((response) => {
-          deleteTabungan();
-        })
-        .catch((error) => {
-          console.error("Error deleting nilai:", error);
-          alert("Gagal menghapus nilai");
-        });
-    } else {
-      alert("Penghapusan nilai dibatalkan");
-    }
-  };
-
-  const deleteTabungan = () => {
-    try {
-      axios
-        .delete(`https://e2f-api-production.up.railway.app/api/nilai/delete`, {
-          data: {
-            id: saldo.id,
-          },
-        })
-        .then((response) => {
-          alert("Nilai dan Tabungan berhasil dihapus");
-        });
-    } catch (error) {
-      alert("Gagal menghapus nilai dan Tabungan");
-    }
-  };
-
   const updateSaldo = () => {
-    let data = {
-      saldo: saldo.saldo,
+    const data = {
+      saldo: saldo.saldo + newSaldo,
       id_siswa: saldo.id_siswa,
       id_mapel: saldo.id_mapel,
       id: saldo.id,
     };
 
-    let config = {
+    const config = {
       method: "put",
       maxBodyLength: Infinity,
       url: "https://e2f-api-production.up.railway.app/api/tabungan/update",
@@ -271,9 +231,52 @@ export default function Nilai() {
         closeModal();
       })
       .catch((error) => {
-        console.log(error);
-        alert("Gagal setor nilai");
+        console.error("Error updating saldo:", error);
+        alert("Gagal memperbarui saldo");
       });
+  };
+
+  const deleteNilai = async (item) => {
+    // Konfirmasi dengan pengguna
+    const confirmDelete = window.confirm(
+      "Apakah Anda yakin ingin menghapus nilai ini?"
+    );
+
+    if (confirmDelete) {
+      try {
+        await axios.delete(
+          `https://e2f-api-production.up.railway.app/api/tabungan/delete`,
+          {
+            data: { id_siswa: item.id_siswa, id_mapel: item.id_mapel },
+          }
+        );
+
+        await deleteTabungan(item.id);
+
+        alert("Nilai dan Tabungan berhasil dihapus");
+        fetchData();
+        closeModal();
+      } catch (error) {
+        console.error("Error deleting nilai and tabungan:", error);
+        alert("Gagal menghapus nilai dan tabungan");
+      }
+    } else {
+      alert("Penghapusan nilai dibatalkan");
+    }
+  };
+
+  const deleteTabungan = async (id) => {
+    try {
+      await axios.delete(
+        `https://e2f-api-production.up.railway.app/api/nilai/delete`,
+        {
+          data: { id: id },
+        }
+      );
+    } catch (error) {
+      console.error("Error deleting tabungan:", error);
+      throw error; // Rethrow error to be caught in deleteNilai
+    }
   };
 
   const handleUpdateTabungan = (e) => {
@@ -292,10 +295,7 @@ export default function Nilai() {
       }));
     }
 
-    setSaldo((prevState) => ({
-      ...prevState,
-      saldo: prevState.saldo + saldoTabungan,
-    }));
+    setnewSaldo(saldoTabungan);
   };
 
   const fetchDataMapel = async () => {
@@ -611,7 +611,7 @@ export default function Nilai() {
                         onChange={(e) => {
                           setFormData({
                             ...formData,
-                            credit_ganjil: parseFloat(e.target.value),
+                            credit_ganjil: parseInt(e.target.value),
                           });
                         }}
                       />
@@ -626,6 +626,8 @@ export default function Nilai() {
                           className="mt-1 bg-white p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
                           placeholder="Masukkan nilai yang ingin di tabung"
                           onChange={handleUpdateTabungan}
+                          min="0"
+                          max={formData.credit_ganjil}
                         />
                       ) : (
                         <div>{saldo.saldo}</div>
@@ -662,6 +664,8 @@ export default function Nilai() {
                           className="mt-1 bg-white p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
                           placeholder="Masukkan nilai yang ingin di tabung"
                           onChange={handleUpdateTabungan}
+                          min="0"
+                          max={formData.credit_genap}
                         />
                       ) : (
                         <div>{saldo.saldo}</div>
