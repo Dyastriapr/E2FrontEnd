@@ -455,7 +455,7 @@ export default function Nilai() {
                 <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
                   Nama Mata Pelajaran
                 </th>
-                <th className=" font-medium text-black dark:text-white xl:pl-11">
+                <th className="text-center font-medium text-black dark:text-white xl:pl-11">
                   Kelas
                 </th>
                 <th className="min-w-[100px] py-4 px-4 font-medium text-black dark:text-white text-center">
@@ -490,7 +490,7 @@ export default function Nilai() {
                       </h5>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      <h5 className="font-medium text-black dark:text-white py-4 ">
+                      <h5 className="font-medium text-black dark:text-white py-4 text-center">
                         {packageItem.Kela?.nama_kelas}
                       </h5>
                     </td>
@@ -905,21 +905,25 @@ export default function Nilai() {
                   </label>
                   <div>{saldo.saldo}</div>
                 </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">
-                    {semester === 1
-                      ? "Tarik Nilai Semester Ganjil"
-                      : "Tarik Nilai Semester Genap"}
-                  </label>
-                  <input
-                    type="number"
-                    className="bg-white mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                    placeholder="Tarik nilai dari saldo untuk nilai rapot"
-                    min="0"
-                    max={saldo.saldo}
-                    onChange={handleUpdateNilai}
-                  />
-                </div>
+                {saldo.saldo !== 0 ? (
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700">
+                      {semester === 1
+                        ? "Tarik Nilai Semester Ganjil"
+                        : "Tarik Nilai Semester Genap"}
+                    </label>
+                    <input
+                      type="number"
+                      className="bg-white mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                      placeholder="Tarik nilai dari saldo untuk nilai rapot"
+                      min="0"
+                      max={saldo.saldo}
+                      onChange={handleUpdateNilai}
+                    />
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
               <div className="flex items-center justify-end pt-6 border-t border-solid rounded-b border-blueGray-200">
                 <button
