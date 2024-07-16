@@ -10,6 +10,7 @@ import Siswa from "../modules/datamaster/siswa";
 import DataSiswa from "../modules/data/DataSiswa";
 import Nilai from "../modules/nilai";
 import DataGuru from "../modules/data/DataGuru";
+import Prestasi from "../modules/prestasi/Prestasi";
 
 function BaseRoute() {
   return (
@@ -88,6 +89,14 @@ function BaseRoute() {
           element={
             <DefaultLayout>
               <Nilai />
+            </DefaultLayout>
+          }
+        />
+        <Route
+          path="/prestasi"
+          element={
+            <DefaultLayout>
+              <Prestasi />
             </DefaultLayout>
           }
         />
