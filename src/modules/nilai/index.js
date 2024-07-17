@@ -7,11 +7,12 @@ import ModalForm from "./ModalForm";
 export default function Nilai() {
   const { id } = useParams();
   const [semester, setSemester] = useState(1);
-  const [kelas, setKelas] = useState();
+  const [kelas, setKelas] = useState([]);
+  const [filteredKelas, setFilteredKelas] = useState("All");
   const [tahunAjar, setTahunAjar] = useState();
   const [mapel, setMapel] = useState();
   const [siswa, setSiswa] = useState();
-  const [nilai, setNilai] = useState();
+  const [nilai, setNilai] = useState([]);
   const [saldo, setSaldo] = useState({});
   const [modalOpen, setModalOpen] = useState(false);
   const [modalSetorOpen, setModalSetorOpen] = useState(false);
@@ -427,6 +428,12 @@ export default function Nilai() {
     fetchDataTahunAjar();
   }, []);
 
+  const handleKelasFilterChange = (e) => {
+    setFilteredKelas(e.target.value);
+  };
+
+  const filteredNilai = filteredKelas === "All" ? nilai : nilai.filter((item) => item.Kela?.id == filteredKelas);
+
   return (
     <div>
       <div className="flex justify-between items-center mb-2">
@@ -434,9 +441,27 @@ export default function Nilai() {
           <h1 className="text-2xl">Nama : {siswa}</h1>
         </div>
 
-        <div className="text-right">
+        <div className="text-right flex space-x-4">
+          <div>
+            <label htmlFor="filterKelas" className="text-black dark:text-white">
+              Filter Kelas:
+            </label>
+            <select
+              id="filterKelas"
+              className="ml-2 px-3 py-1 border border-gray-300 rounded-md bg-white shadow-sm focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
+              value={filteredKelas}
+              onChange={handleKelasFilterChange}
+            >
+              <option value="All">All</option>
+              {kelas.map((kelas) => (
+                <option key={kelas.id} value={kelas.id}>
+                  {kelas.nama_kelas}
+                </option>
+              ))}
+            </select>
+          </div>
           <button
-            className="btn btn-primary me-2"
+            className="btn btn-primary"
             onClick={() => {
               setModalTambahOpen(true);
             }}
@@ -481,8 +506,8 @@ export default function Nilai() {
               </tr>
             </thead>
             <tbody>
-              {nilai &&
-                nilai.map((packageItem, key) => (
+              {filteredNilai &&
+                filteredNilai.map((packageItem, key) => (
                   <tr key={key}>
                     <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                       <h5 className="font-medium text-black dark:text-white text-start">

@@ -231,7 +231,10 @@ const Kelas = () => {
           <table className="w-full table-auto">
             <thead>
               <tr className="bg-gray-2 text-left dark:bg-meta-4">
-                <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                <th className="min-w-[50px] py-4 px-4 font-medium text-black dark:text-white">
+                  No.
+                </th>
+                <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white">
                   Nama Kelas
                 </th>
                 <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
@@ -245,7 +248,12 @@ const Kelas = () => {
             <tbody>
               {kelas.map((item, key) => (
                 <tr key={key}>
-                  <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                    <h5 className="font-medium text-black dark:text-white">
+                      {key + 1}
+                    </h5>
+                  </td>
+                  <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark">
                     <h5 className="font-medium text-black dark:text-white">
                       {item.nama_kelas}
                     </h5>
