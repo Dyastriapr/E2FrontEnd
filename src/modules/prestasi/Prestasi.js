@@ -1,30 +1,37 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
-import { Link } from "react-router-dom";
 
 Modal.setAppElement("#root");
 
 const DataPrestasi = () => {
   const [prestasi, setPrestasi] = useState([]);
+  const [siswa, setSiswa] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [formData, setFormData] = useState({
-    nama_siswa: "",
+    id_siswa: "",
+    prestasi: "",
     jenis_prestasi: "",
     tingkat: "",
-    hasil: "",
+    sertifikat: null,
   });
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        "https://e2f-api-production.up.railway.app/api/prestasi/fetch-all"
-      );
-      setPrestasi(response.data.data);
+      const [prestasiResponse, siswaResponse] = await Promise.all([
+        axios.get(
+          "https://e2f-api-production.up.railway.app/api/prestasi/fetch-all"
+        ),
+        axios.get(
+          "https://e2f-api-production.up.railway.app/api/siswa/fetch-all"
+        ),
+      ]);
+      setPrestasi(prestasiResponse.data.data);
+      setSiswa(siswaResponse.data.data);
     } catch (error) {
-      console.log("Error fetching data:", error);
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -32,25 +39,14 @@ const DataPrestasi = () => {
     fetchData();
   }, []);
 
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(
-        `https://e2f-api-production.up.railway.app/api/prestasi/delete`,
-        { data: { id } }
-      );
-      fetchData(); // Refresh data setelah penghapusan
-    } catch (error) {
-      console.log("Error deleting data:", error);
-    }
-  };
-
   const handleOpenModal = () => {
     setIsEditing(false);
     setFormData({
-      nama_siswa: "",
+      id_siswa: "",
+      prestasi: "",
       jenis_prestasi: "",
       tingkat: "",
-      hasil: "",
+      sertifikat: null,
     });
     setModalIsOpen(true);
   };
@@ -63,20 +59,23 @@ const DataPrestasi = () => {
     setIsEditing(true);
     setEditId(prestasi.id);
     setFormData({
-      nama_siswa: prestasi.nama_siswa,
+      id_siswa: prestasi.id_siswa,
+      prestasi: prestasi.prestasi,
       jenis_prestasi: prestasi.jenis_prestasi,
       tingkat: prestasi.tingkat,
-      hasil: prestasi.hasil,
+      sertifikat: null,
     });
     setModalIsOpen(true);
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: files[0] }));
   };
 
   const handleSubmit = async (e) => {
@@ -87,23 +86,18 @@ const DataPrestasi = () => {
     }
 
     try {
-      if (isEditing) {
-        await axios.put(
-          `https://e2f-api-production.up.railway.app/api/prestasi/update/${editId}`,
-          data
-        );
-        alert("Data berhasil diperbarui");
-      } else {
-        await axios.post(
-          "https://e2f-api-production.up.railway.app/api/prestasi/create",
-          data
-        );
-        alert("Data berhasil ditambahkan");
-      }
+      const method = isEditing ? "put" : "post";
+      const url = isEditing
+        ? `https://e2f-api-production.up.railway.app/api/prestasi/update/${editId}`
+        : "https://e2f-api-production.up.railway.app/api/prestasi/create";
+      await axios({ method, url, data });
+      alert(
+        isEditing ? "Data berhasil diperbarui" : "Data berhasil ditambahkan"
+      );
       fetchData();
       handleCloseModal();
     } catch (error) {
-      console.log("Error submitting data:", error);
+      console.error("Error submitting data:", error);
     }
   };
 
@@ -124,13 +118,16 @@ const DataPrestasi = () => {
                   Nama Siswa
                 </th>
                 <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+                  Prestasi
+                </th>
+                <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
                   Jenis Prestasi
                 </th>
                 <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
                   Tingkat
                 </th>
                 <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                  Hasil
+                  Sertifikat
                 </th>
                 <th className="py-4 px-4 font-medium text-black dark:text-white">
                   Actions
@@ -141,9 +138,13 @@ const DataPrestasi = () => {
               {prestasi.map((item, index) => (
                 <tr key={index}>
                   <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                    <h5 className="font-medium text-black dark:text-white">
-                      {item.nama_siswa}
-                    </h5>
+                    {siswa.find((s) => s.id === item.id_siswa)?.nama_siswa ||
+                      "Unknown"}
+                  </td>
+                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                    <p className="text-black dark:text-white">
+                      {item.prestasi}
+                    </p>
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     <p className="text-black dark:text-white">
@@ -154,7 +155,15 @@ const DataPrestasi = () => {
                     <p className="text-black dark:text-white">{item.tingkat}</p>
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    <p className="text-black dark:text-white">{item.hasil}</p>
+                    {item.sertifikat ? (
+                      <img
+                        src={`https://e2f-api-production.up.railway.app/${item.sertifikat}`}
+                        alt="Sertifikat"
+                        className="h-16 w-16 object-cover rounded-full"
+                      />
+                    ) : (
+                      "No File"
+                    )}
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     <div className="flex items-center space-x-3.5">
@@ -168,7 +177,7 @@ const DataPrestasi = () => {
                         onClick={() => handleDelete(item.id)}
                         className="btn btn-danger hover:text-danger"
                       >
-                        Hapus
+                        Delete
                       </button>
                     </div>
                   </td>
@@ -195,10 +204,29 @@ const DataPrestasi = () => {
               <label className="block text-sm font-medium text-gray-700">
                 Nama Siswa
               </label>
+              <select
+                name="id_siswa"
+                value={formData.id_siswa}
+                onChange={handleChange}
+                required
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+              >
+                <option value="">Pilih Siswa</option>
+                {siswa.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.nama_siswa}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Prestasi
+              </label>
               <input
                 type="text"
-                name="nama_siswa"
-                value={formData.nama_siswa}
+                name="prestasi"
+                value={formData.prestasi}
                 onChange={handleChange}
                 required
                 className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
@@ -232,15 +260,14 @@ const DataPrestasi = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Hasil
+                Sertifikat (Upload File)
               </label>
               <input
-                type="text"
-                name="hasil"
-                value={formData.hasil}
-                onChange={handleChange}
-                required
-                className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+                type="file"
+                name="sertifikat"
+                onChange={handleFileChange}
+                accept="image/*"
+                className="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer focus:outline-none"
               />
             </div>
             <div className="flex justify-end space-x-4">
