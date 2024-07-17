@@ -4,31 +4,28 @@ import { Link } from "react-router-dom";
 
 const DataSiswa = () => {
   const [siswa, setSiswa] = useState([]);
-  const [kelas, setKelas] = useState([]);
-  const [tahunAjar, setTahunAjar] = useState([]);
-  const [filterKelas, setFilterKelas] = useState("Semua");
-  const [filterTahunAjar, setFilterTahunAjar] = useState("Semua");
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const handleKelasChange = (e) => {
-    setFilterKelas(e.target.value);
+  const handleSortChange = () => {
+    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
   };
 
-  const handleTahunAjarChange = (e) => {
-    setFilterTahunAjar(e.target.value);
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
   };
 
-  const filteredData = siswa.filter((item) => {
-    if (filterKelas !== "Semua" && item.kelas?.nama_kelas !== filterKelas) {
-      return false;
-    }
-    if (
-      filterTahunAjar !== "Semua" &&
-      item.kelas?.tahun_ajar?.tahun_ajar !== filterTahunAjar
-    ) {
-      return false;
-    }
-    return true;
-  });
+  const filteredData = siswa
+    .filter((item) =>
+      item.nama_siswa.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (sortOrder === "asc") {
+        return a.nama_siswa.localeCompare(b.nama_siswa);
+      } else {
+        return b.nama_siswa.localeCompare(a.nama_siswa);
+      }
+    });
 
   const fetchData = async () => {
     try {
@@ -37,16 +34,6 @@ const DataSiswa = () => {
       );
       console.log("res", responseSiswa);
       setSiswa(responseSiswa.data.data);
-
-      const responseKelas = await axios.get(
-        "https://e2f-api-production.up.railway.app/api/kelas/fetch-all"
-      );
-      setKelas(responseKelas.data.data);
-
-      const responseTahunAjar = await axios.get(
-        "https://e2f-api-production.up.railway.app/api/tahun-ajar/fetch-all"
-      );
-      setTahunAjar(responseTahunAjar.data.data);
     } catch (error) {
       console.log("Error fetching data:", error);
     }
@@ -62,44 +49,20 @@ const DataSiswa = () => {
         <div className="text-2xl font-bold">DATA SISWA</div>
         <div className="flex space-x-4">
           <div>
-            <label htmlFor="filterKelas" className="text-black dark:text-white">
-              Filter Kelas:
+            <label htmlFor="search" className="text-black dark:text-white">
+              Cari Nama:
             </label>
-            <select
-              id="filterKelas"
+            <input
+              id="search"
+              type="text"
               className="ml-2 px-3 py-1 border border-gray-300 rounded-md bg-white shadow-sm focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
-              value={filterKelas}
-              onChange={handleKelasChange}
-            >
-              <option value="Semua">Semua</option>
-              {kelas.map((kelas) => (
-                <option key={kelas.id} value={kelas.nama_kelas}>
-                  {kelas.nama_kelas}
-                </option>
-              ))}
-            </select>
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
           </div>
-          <div>
-            <label
-              htmlFor="filterTahunAjar"
-              className="text-black dark:text-white"
-            >
-              Filter Tahun Ajar:
-            </label>
-            <select
-              id="filterTahunAjar"
-              className="ml-2 px-3 py-1 border border-gray-300 rounded-md bg-white shadow-sm focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
-              value={filterTahunAjar}
-              onChange={handleTahunAjarChange}
-            >
-              <option value="Semua">Semua</option>
-              {tahunAjar.map((tahun) => (
-                <option key={tahun.id} value={tahun.tahun_ajar}>
-                  {tahun.tahun_ajar}
-                </option>
-              ))}
-            </select>
-          </div>
+          <button onClick={handleSortChange} className="btn btn-primary">
+            Sort {sortOrder === "asc" ? "A-Z" : "Z-A"}
+          </button>
         </div>
       </div>
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
