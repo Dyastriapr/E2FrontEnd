@@ -549,6 +549,13 @@ export default function Nilai() {
                 ))}
             </tbody>
           </table>
+
+          <div>
+            <p>Keterangan : </p>
+            <p>Credit : Nilai Asli Siswa </p>
+            <p>Debet : Nilai yang Di Cantumkan Di Rapor </p>
+            <p>Saldo : Tabungan Nilai Siswa </p>
+          </div>
         </div>
       </div>
 
