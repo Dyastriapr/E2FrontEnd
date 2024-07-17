@@ -110,12 +110,6 @@ const DataSiswa = () => {
                 <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
                   Nama
                 </th>
-                <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                  Kelas
-                </th>
-                <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                  Tahun ajar
-                </th>
                 <th className="py-4 px-4 font-medium text-black dark:text-white">
                   Actions
                 </th>
@@ -129,16 +123,6 @@ const DataSiswa = () => {
                       <h5 className="font-medium text-black dark:text-white">
                         {item.nama_siswa}
                       </h5>
-                    </td>
-                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      <p className="text-black dark:text-white">
-                        {item.kelas?.nama_kelas}
-                      </p>
-                    </td>
-                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      <p className="text-black dark:text-white">
-                        {item.kelas?.tahun_ajar?.tahun_ajar}
-                      </p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <div className="flex items-center space-x-3.5">
