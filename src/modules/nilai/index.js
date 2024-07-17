@@ -593,7 +593,7 @@ export default function Nilai() {
                           openAddModal(packageItem);
                         }}
                       >
-                        Setor Nilai
+                        Setor
                       </button>
                       <button
                         className="btn btn-primary me-3"
@@ -601,7 +601,7 @@ export default function Nilai() {
                           openPutModal(packageItem);
                         }}
                       >
-                        Tarik Nilai
+                        Tarik
                       </button>
                       <button
                         className="btn btn-success me-3"
@@ -609,7 +609,7 @@ export default function Nilai() {
                           exportExcel(packageItem.id);
                         }}
                       >
-                        Export Nilai
+                        Export
                       </button>
                       <button
                         className="btn bg-red-500 hover:bg-red-700 border-0 text-black"
@@ -617,7 +617,7 @@ export default function Nilai() {
                           deleteNilai(packageItem);
                         }}
                       >
-                        Hapus Nilai
+                        Hapus
                       </button>
                     </td>
                   </tr>
