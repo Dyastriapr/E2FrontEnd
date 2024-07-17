@@ -29,7 +29,7 @@ export default function Prestasi() {
     let config = {
       method: "get",
       maxBodyLength: Infinity,
-      url: "http://localhost:5000/api/prestasi/fetch-all",
+      url: "http://e2f-api-production.up.railway.app/api/prestasi/fetch-all",
       headers: {},
     };
 
