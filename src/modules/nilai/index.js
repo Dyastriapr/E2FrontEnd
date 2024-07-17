@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Modal from "./Modal";
 import ModalForm from "./ModalForm";
+import * as XLSX from "xlsx";
 
 export default function Nilai() {
   const { id } = useParams();
@@ -327,6 +328,44 @@ export default function Nilai() {
     }
   };
 
+  const exportExcel = async (id) => {
+    try {
+      const response = await axios.get(
+        `https://e2f-api-production.up.railway.app/api/nilai/${id}`
+      );
+      const data = response.data.data;
+
+      // Membuat objek data untuk Excel
+      const excelData = [
+        {
+          Nama: data.Siswa.nama_siswa,
+          Kelas: data.Kela ? data.Kela.nama_kelas : "N/A", // Asumsikan ada properti 'nama_kelas' di dalam 'Kela'
+          "Tahun Ajar": data.TahunAjar.tahun_ajar,
+          "Mata Pelajaran": data.MataPelajaran.mata_pelajaran,
+          "Credit Ganjil": data.credit_ganjil,
+          "Debit Ganjil": data.debet_ganjil,
+          "Credit Genap": data.credit_genap,
+          "Debit Genap": data.debet_genap,
+        },
+      ];
+
+      // Membuat worksheet dari data
+      const worksheet = XLSX.utils.json_to_sheet(excelData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Data Nilai");
+
+      // Mengunduh file Excel
+      XLSX.writeFile(
+        workbook,
+        `${data.Siswa.nama_siswa}-${data.Kela ? data.Kela.nama_kelas : ""}-${
+          data.MataPelajaran.mata_pelajaran
+        }.xlsx`
+      );
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   const handleUpdateTabungan = (e) => {
     const { value } = e.target;
     const saldoTabungan = parseFloat(value) || 0;
@@ -432,7 +471,10 @@ export default function Nilai() {
     setFilteredKelas(e.target.value);
   };
 
-  const filteredNilai = filteredKelas === "All" ? nilai : nilai.filter((item) => item.Kela?.id == filteredKelas);
+  const filteredNilai =
+    filteredKelas === "All"
+      ? nilai
+      : nilai.filter((item) => item.Kela?.id == filteredKelas);
 
   return (
     <div>
@@ -562,6 +604,14 @@ export default function Nilai() {
                         Tarik Nilai
                       </button>
                       <button
+                        className="btn btn-success me-3"
+                        onClick={() => {
+                          exportExcel(packageItem.id);
+                        }}
+                      >
+                        Export Nilai
+                      </button>
+                      <button
                         className="btn bg-red-500 hover:bg-red-700 border-0 text-black"
                         onClick={() => {
                           deleteNilai(packageItem);
@@ -577,10 +627,10 @@ export default function Nilai() {
         </div>
       </div>
       <div>
-            <p>Keterangan : </p>
-            <p>Credit : Nilai Asli Siswa </p>
-            <p>Debet : Nilai yang Di Cantumkan Di Rapor </p>
-            <p>Saldo : Tabungan Nilai Siswa </p>
+        <p>Keterangan : </p>
+        <p>Credit : Nilai Asli Siswa </p>
+        <p>Debet : Nilai yang Di Cantumkan Di Rapor </p>
+        <p>Saldo : Tabungan Nilai Siswa </p>
       </div>
 
       {/* modal saldo */}

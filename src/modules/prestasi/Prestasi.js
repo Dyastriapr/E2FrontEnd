@@ -45,6 +45,21 @@ export default function Prestasi() {
     }
   };
 
+  const fetchSertif = async (id) => {
+    try {
+      const response = await axios.get(
+        `https://e2f-api-production.up.railway.app/api/prestasi/fetch-sertif/${id}`,
+        { responseType: "arraybuffer" } // Mendapatkan data sebagai array buffer
+      );
+
+      const blob = new Blob([response.data], { type: "image/png" }); // Sesuaikan tipe MIME dengan tipe data
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank");
+    } catch (error) {
+      console.log("Error fetching data:", error);
+    }
+  };
+
   const handleDelete = async (id) => {
     try {
       await axios.delete(
@@ -185,7 +200,7 @@ export default function Prestasi() {
                     <p className="text-black dark:text-white">{item.tingkat}</p>
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    {item.sertifikat ? (
+                    {/* {item.sertifikat ? (
                       <img
                         src={item.sertifikat}
                         alt="Sertifikat"
@@ -195,7 +210,16 @@ export default function Prestasi() {
                       <p className="text-black dark:text-white">
                         Tidak ada sertifikat
                       </p>
-                    )}
+                    )} */}
+                    <p
+                      className="hover:font-bold cursor-pointer"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        fetchSertif(item.id);
+                      }}
+                    >
+                      {item.sertifikat}
+                    </p>
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     <div className="flex items-center space-x-3.5">
