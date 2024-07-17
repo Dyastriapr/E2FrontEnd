@@ -549,14 +549,13 @@ export default function Nilai() {
                 ))}
             </tbody>
           </table>
-
-          <div>
+        </div>
+      </div>
+      <div>
             <p>Keterangan : </p>
             <p>Credit : Nilai Asli Siswa </p>
             <p>Debet : Nilai yang Di Cantumkan Di Rapor </p>
             <p>Saldo : Tabungan Nilai Siswa </p>
-          </div>
-        </div>
       </div>
 
       {/* modal saldo */}
