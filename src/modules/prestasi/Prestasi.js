@@ -270,27 +270,40 @@ export default function Prestasi() {
               <label className="block text-sm font-medium text-gray-700">
                 Jenis Prestasi
               </label>
-              <input
-                type="text"
+              <select
                 name="jenis_prestasi"
                 value={formData.jenis_prestasi}
                 onChange={handleChange}
                 required
                 className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-              />
+              >
+                <option value="" disabled>
+                  Pilih Jenis Prestasi
+                </option>
+                <option value="Akademik">Akademik</option>
+                <option value="Nonakademik">Nonakademik</option>
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Tingkat
               </label>
-              <input
-                type="text"
+              <select
                 name="tingkat"
                 value={formData.tingkat}
                 onChange={handleChange}
                 required
                 className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-              />
+              >
+                <option value="" disabled>
+                  Pilih Tingkat
+                </option>
+                <option value="Kecamatan">Kecamatan</option>
+                <option value="Kabupaten/Kota">Kabupaten/Kota</option>
+                <option value="Provinsi">Provinsi</option>
+                <option value="Nasional">Nasional</option>
+                <option value="Internasional">Internasional</option>
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
