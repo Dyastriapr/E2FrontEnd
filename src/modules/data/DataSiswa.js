@@ -15,6 +15,23 @@ const DataSiswa = () => {
     setSearchTerm(e.target.value);
   };
 
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Apakah Anda yakin ingin menghapus data siswa ini?"
+    );
+    if (confirmDelete) {
+      try {
+        await axios.delete(
+          "https://e2f-api-production.up.railway.app/api/siswa/delete",
+          { data: { id } }
+        );
+        fetchData(); // Refresh data setelah penghapusan
+      } catch (error) {
+        console.log("Error deleting data:", error);
+      }
+    }
+  };
+
   const filteredData = siswa
     .filter((item) =>
       item.nama_siswa.toLowerCase().includes(searchTerm.toLowerCase())
@@ -95,6 +112,12 @@ const DataSiswa = () => {
                         >
                           Tabungan
                         </Link>
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="btn btn-danger hover:text-danger"
+                        >
+                          Hapus
+                        </button>
                       </div>
                     </td>
                   </tr>
