@@ -25,9 +25,11 @@ const DataSiswa = () => {
           "https://e2f-api-production.up.railway.app/api/siswa/delete",
           { data: { id } }
         );
+        alert("Data siswa berhasil dihapus");
         fetchData(); // Refresh data setelah penghapusan
       } catch (error) {
         console.log("Error deleting data:", error);
+        alert("Gagal menghapus data siswa");
       }
     }
   };
@@ -51,8 +53,10 @@ const DataSiswa = () => {
       );
       console.log("res", responseSiswa);
       setSiswa(responseSiswa.data.data);
+      alert("Data siswa berhasil diambil");
     } catch (error) {
       console.log("Error fetching data:", error);
+      alert("Gagal mengambil data siswa");
     }
   };
 
