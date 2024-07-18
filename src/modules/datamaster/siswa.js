@@ -49,6 +49,10 @@ const Siswa = () => {
       .request(config)
       .then((response) => {
         console.log(response.data);
+        // Show success alert
+        alert(
+          `Data siswa bernama: ${formData.nama_siswa} berhasil ditambahkan`
+        );
         // Reset form data
         setFormData({
           nama_siswa: "",
@@ -56,6 +60,7 @@ const Siswa = () => {
       })
       .catch((error) => {
         console.log(error);
+        alert("Gagal menambahkan data siswa");
       });
   };
 
@@ -86,7 +91,7 @@ const Siswa = () => {
             </div>
             <div className="flex justify-end">
               <button type="submit" className="btn btn-primary justify-end">
-                Save
+                Tambah
               </button>
             </div>
           </form>

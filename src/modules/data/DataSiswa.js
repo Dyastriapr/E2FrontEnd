@@ -53,7 +53,6 @@ const DataSiswa = () => {
       );
       console.log("res", responseSiswa);
       setSiswa(responseSiswa.data.data);
-      alert("Data siswa berhasil diambil");
     } catch (error) {
       console.log("Error fetching data:", error);
       alert("Gagal mengambil data siswa");
